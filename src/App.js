@@ -1,23 +1,24 @@
 import React, { useState } from "react";
-import { Stage, Layer, Rect } from "react-konva";
-const DrawAnnotations = () => {
+import { Layer, Rect, Stage } from "react-konva";
+function App() {
   const [tool, setTool] = useState("");
-  const [annotations, setAnnotations] = useState([]);
-  const [newAnnotation, setNewAnnotation] = useState([]);
+  const [rectCoordinate, setRectCoordinate] = useState([]);
+  const [newRectCoordinate, setNewRectCoordinate] = useState([]);
+
   const handleMouseDown = (event) => {
     if (tool === "rectangle") {
-      if (newAnnotation.length === 0) {
+      if (newRectCoordinate.length === 0) {
         const { x, y } = event.target.getStage().getPointerPosition();
-        setNewAnnotation([{ x, y, width: 0, height: 0, key: "0" }]);
+        setNewRectCoordinate([{ x, y, width: 0, height: 0, key: "0" }]);
       }
     }
   };
   const handleMouseMove = (event) => {
-    if (newAnnotation.length === 1) {
-      const sx = newAnnotation[0].x;
-      const sy = newAnnotation[0].y;
+    if (newRectCoordinate.length === 1) {
+      const sx = newRectCoordinate[0].x;
+      const sy = newRectCoordinate[0].y;
       const { x, y } = event.target.getStage().getPointerPosition();
-      setNewAnnotation([
+      setNewRectCoordinate([
         {
           x: sx,
           y: sy,
@@ -29,24 +30,23 @@ const DrawAnnotations = () => {
     }
   };
   const handleMouseUp = (event) => {
-    if (newAnnotation.length === 1) {
-      const sx = newAnnotation[0].x;
-      const sy = newAnnotation[0].y;
+    if (newRectCoordinate.length === 1) {
+      const sx = newRectCoordinate[0].x;
+      const sy = newRectCoordinate[0].y;
       const { x, y } = event.target.getStage().getPointerPosition();
       const annotationToAdd = {
         x: sx,
         y: sy,
         width: x - sx,
         height: y - sy,
-        key: annotations.length + 1,
+        key: rectCoordinate.length + 1,
       };
-      annotations.push(annotationToAdd);
-      setNewAnnotation([]);
-      setAnnotations(annotations);
+      rectCoordinate.push(annotationToAdd);
+      setNewRectCoordinate([]);
+      setRectCoordinate(rectCoordinate);
     }
   };
-
-  const annotationsToDraw = [...annotations, ...newAnnotation];
+  const drawRect = [...rectCoordinate, ...newRectCoordinate];
   return (
     <>
       <input
@@ -71,7 +71,7 @@ const DrawAnnotations = () => {
         onMouseMove={handleMouseMove}
       >
         <Layer>
-          {annotationsToDraw.map((value, i) => {
+          {drawRect.map((value, i) => {
             return (
               <Rect
                 key={i}
@@ -87,14 +87,6 @@ const DrawAnnotations = () => {
         </Layer>
       </Stage>
     </>
-  );
-};
-
-function App() {
-  return (
-    <div>
-      <DrawAnnotations />
-    </div>
   );
 }
 
